@@ -203,18 +203,28 @@ daymet_all <- field %>%
                                  .site = site
                                  )
                         ))
-  
+
+daymet_all  %>% head()
+
 ```
 
 Let's inspect weather data for the first site-year.  
 
 ```{r}
 
+daymet_all$weather[1]
+
 ```
 
 Now let's unnest the weather column.  
 ```{r}
-daymet_all_unnest 
+
+daymet_all_unnest <- daymet_all %>% 
+  unnest(weather) %>%
+  pivot_wider(names_from = measurement,
+              values_from = value
+              ) %>%
+  janitor::clean_names()
 
 daymet_all_unnest
 
@@ -228,7 +238,12 @@ We don't want to have to make an API call every time we'll work with this weathe
 Therefore, a best practice here is to pull weather data once and export it to file so we can reuse it any time without having to download again.  
 
 Let's do that below:  
+
 ```{r}
+
+write_csv(daymet_all_unnest, 
+          "../data/fieldweatherdata.csv"
+          )
 
 ```
 
